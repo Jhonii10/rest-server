@@ -1,22 +1,31 @@
-const usersGet = (req, res) => {
+const User = require("../models/user");
+const bcryptjs = require("bcryptjs");
 
-    const {q = ''} = req.query;
+const usersGet = (req, res) => {
 
     res.json({
         message: 'get api',
-        q
     })
 }
 
-const usersPost = (req, res) => {
-    const body = req.body;
+const usersPost = async (req, res) => {
+
+    const {name , email, password , role} = req.body;
+
+    const salt = bcryptjs.genSaltSync();
+    
+    const user = new User({name , email, password, role});
+    user.password = bcryptjs.hashSync(password, salt);
+    
+    await user.save();
+
     res.json({
-        message: 'post api',
-        ...body
+        user
     })
 }
 
 const usersPut = (req, res) => {
+    
     const {id} = req.params;
 
     res.json({
