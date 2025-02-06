@@ -68,10 +68,19 @@ const usersPatch = (req, res) => {
     })
 }
 
-const usersDelete = (req, res) => {
-    res.json({
-        message: 'delete api'
-    })
+const usersDelete = async (req, res) => {
+
+    const {id} = req.params;
+    const userDelete = await User.findByIdAndDelete(id)
+
+    if (userDelete) {
+        res.json({
+            success: true,
+            message: `Usuario con ID: ${id} eliminado exitosamente`
+        })
+        
+    }
+
 }
 
 
