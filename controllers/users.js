@@ -70,18 +70,37 @@ const usersPatch = (req, res) => {
 
 const usersDelete = async (req, res) => {
 
-    const {id} = req.params;
-    const userDelete = await User.findByIdAndDelete(id)
+    const { id } = req.params;
 
-    if (userDelete) {
+    try {
+        
+        const userDelete = await User.findByIdAndDelete(id);
+
+        const userAutenticado = req.user
+
+        if (!userDelete) {
+            return res.status(404).json({
+                success: false,
+                message: `Usuario con ID: ${id} no encontrado`
+            });
+        }
+
         res.json({
             success: true,
-            message: `Usuario con ID: ${id} eliminado exitosamente`
-        })
-        
-    }
+            message: `Usuario con ID: ${id} eliminado exitosamente`,
+            userDelete,
+            userAutenticado
 
-}
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            success: false,
+            message: 'Error al eliminar el usuario'
+        });
+    }
+};
 
 
 module.exports = {
