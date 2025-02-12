@@ -1,7 +1,7 @@
 const {Router} = require('express');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middlewares/validarCampos');
-const { cargarArchivo, actualizarImagen, mostrarImagen } = require('../controllers/uploads');
+const { cargarArchivo, actualizarImagen, mostrarImagen, actualizarImagenCloudinary } = require('../controllers/uploads');
 const { validarArchivo } = require('../middlewares/validarArchivo');
 
 
@@ -23,6 +23,6 @@ router.put('/:coleccion/:id', [
     check('coleccion', `la collecion no es permitida : ${['users', 'products']}`).isIn(['users', 'products']),
     validarArchivo,
     validarCampos,
-], actualizarImagen);
+], actualizarImagenCloudinary);
 
 module.exports = router;
