@@ -1,3 +1,4 @@
+const { Category } = require("../models");
 const User = require("../models/user")
 
 const emailExiste = async(email) => {
@@ -18,7 +19,16 @@ const existUserbyId = async (id)=>{
 }
 
 
+const existCategorybyId = async (id)=>{
+    const existCategory = await Category.findById(id)
+    if (!existCategory){
+        throw new Error(`La categoria con el id: ${id} no existe en la base de datos`);
+    }
+}
+
+
 module.exports = {
     emailExiste,
-    existUserbyId
+    existUserbyId,
+    existCategorybyId
 }
