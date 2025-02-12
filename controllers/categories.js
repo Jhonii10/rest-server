@@ -1,4 +1,4 @@
-const { response, request, json } = require("express");
+const { response, request } = require("express");
 const { Category } = require("../models");
 
 
@@ -125,6 +125,7 @@ const borrarCategoria = async (req = request , res = response) => {
     try {
         
         const deleteID = await Category.findByIdAndUpdate(id, {estado : false}, {new: true});
+        
         res.json({
             message: 'categoria eliminada exitosamente',
             deleteID
