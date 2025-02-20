@@ -1,6 +1,15 @@
-const socketController = ( socket ) => {
+const { comprobarJWT } = require("../helpers/generetJWT");
 
-    console.log('cliente conectado', socket.id);
+const socketController = async ( socket ) => {
+
+    const user = await comprobarJWT(socket.handshake.headers['x-token']);
+    
+    if (!user) {
+        return socket.disconnect();
+    }
+
+    console.log('online', user.name);
+    
     
 }
 
