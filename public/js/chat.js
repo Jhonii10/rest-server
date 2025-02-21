@@ -2,6 +2,13 @@ let user = null;
 let socket = null;
 
 
+const txtUid      = document.querySelector('#txtUid')
+const txtMensaje  = document.querySelector('#txtMensaje')
+const ulUsuarios  = document.querySelector('#ulUsuarios')
+const ulMensajes  = document.querySelector('#ulMensajes')
+const btnSalir    = document.querySelector('#btnSalir')
+
+
 const validarJWT = async () => {
 
     
@@ -37,17 +44,105 @@ const validarJWT = async () => {
 
 const conectarSocket = async () => {
 
-    const socket = io({
+    socket = io({
         'extraHeaders': {
             'x-token': localStorage.getItem('token')
         }
     });
 
-    return socket
+    socket.on('connect', () => {
+        console.log('Conectado al servidor');
+    })
+
+    socket.on('disconnect', () => {
+        console.log('Desconectado del servidor');
+    })
+
+    socket.on('recibir-mensajes', (mensajes) => {
+        let mensajesHTML = '';
+        mensajes.forEach((mensaje) => {
+
+            mensajesHTML += `
+                <li>
+                    <p>
+                        <span class="text-primary">
+                        ${mensaje.name}
+                        </span>
+                        <span class="text-success">${mensaje.mensaje}</span>
+                    </p>
+                </li>
+            `
+        })
+
+        ulMensajes.innerHTML = mensajesHTML;
+    })
+
+    socket.on('usuarios-activos', (usuarios) => {
+
+       
+        let usersHTML = '';
+        usuarios.forEach((user) => {
+
+            usersHTML += `
+                <li>
+                    <p>
+                        <h5 class = "text-success">
+                        ${user.name}
+                        </h5>
+                        <span class = "">${user.uid}</span>
+                    </p>
+                </li>
+            `
+        })
+
+        ulUsuarios.innerHTML = usersHTML;
+        
+    })
+
+    socket.on('mensaje-privado', ({de , mensaje}) => {
+        
+        
+        let usersHTML = '';
+    
+
+        usersHTML += `
+            <li>
+                <p>
+                    <h5 class = "text-success">
+                    ${de}
+                    </h5>
+                    <span class = "">${mensaje}</span>
+                </p>
+            </li>
+            `
+
+        ulMensajes.innerHTML = usersHTML;
+    })
 
 
 
 }
+
+
+txtMensaje.addEventListener('keyup', ({keyCode}) => {
+
+    const mensaje = txtMensaje.value;
+    const uid = txtUid.value;
+
+    if (keyCode !== 13) {
+        return;
+    }
+
+    if (mensaje.length === 0) {
+        return;
+    }
+
+    socket.emit('enviar-mensaje', {mensaje , uid})
+
+    txtMensaje.value = '';
+
+
+})
 
 
 
